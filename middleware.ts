@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("sb-access-token")?.value;
+  const { pathname } = request.nextUrl;
 
-  // Allow login page
-  if (request.nextUrl.pathname.startsWith("/admin/login")) {
+  // allow login page
+  if (pathname.startsWith("/admin/login")) {
     return NextResponse.next();
   }
 
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith("/admin")) {
+  // protect admin pages
+  if (pathname.startsWith("/admin")) {
+    const token = request.cookies.get("sb-access-token")?.value;
+
     if (!token) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
