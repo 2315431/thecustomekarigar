@@ -10,7 +10,8 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(formData) {
+  async function handleSubmit(formData: FormData) {
+
     setLoading(true);
     setError("");
 
