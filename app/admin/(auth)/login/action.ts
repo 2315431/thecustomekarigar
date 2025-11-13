@@ -21,6 +21,7 @@ export async function loginAction(formData: FormData) {
     return { error: error.message };
   }
 
+  // set cookies manually so middleware works
   cookies().set("sb-access-token", data.session!.access_token, {
     httpOnly: true,
     secure: true,

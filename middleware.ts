@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const pathname = request.nextUrl.pathname;
 
-  // Allow the real login route
-  if (pathname.startsWith("/admin/(auth)/login")) {
+  // Allow REAL login route
+  if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
-  // Protect all admin pages
+  // Protect ALL admin pages
   if (pathname.startsWith("/admin")) {
-    const token = request.cookies.get("sb-access-token")?.value;
+    const token = request.cookies.get("sb-access-token");
 
     if (!token) {
       const url = request.nextUrl.clone();
-      url.pathname = "/admin/(auth)/login";
+      url.pathname = "/admin/login";
       return NextResponse.redirect(url);
     }
   }
