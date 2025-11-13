@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("sb-access-token")?.value;
 
-  // allow login page
-  if (pathname.startsWith("/admin/login")) {
+  // Allow login page
+  if (request.nextUrl.pathname.startsWith("/admin/login")) {
     return NextResponse.next();
   }
 
-  // only protect admin routes
-  if (pathname.startsWith("/admin")) {
-    // supabase sets this cookie on login:
-    const token = request.cookies.get("sb-access-token")?.value;
-
+  // Protect admin routes
+  if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!token) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
@@ -24,7 +21,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*" // protect admin only
-  ],
+  matcher: ["/admin/:path*"],
 };
