@@ -204,17 +204,25 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                     if (!file) return
                     setUploadingVideo(true)
                     try {
-                      const formData = new FormData()
-                      formData.append('file', file)
-                      formData.append('folder', 'videos')
+                      const uploadData = new FormData()
+                      uploadData.append('file', file)
+                      uploadData.append('folder', 'videos')
+                      
                       const response = await fetch('/api/admin/upload', {
                         method: 'POST',
-                        body: formData,
+                        body: uploadData,
                       })
+                      
                       if (response.ok) {
                         const data = await response.json()
-                        setFormData({ ...formData, video_url: data.url, storage_path: data.path })
+                        setFormData((prev) => ({
+                          ...prev,
+                          video_url: data.url || "",
+                          storage_path: data.path || ""
+                        }))
                       }
+                       
+                      
                     } catch (error) {
                       console.error('Upload error:', error)
                     } finally {
@@ -243,17 +251,23 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                     if (!file) return
                     setUploadingThumbnail(true)
                     try {
-                      const formData = new FormData()
-                      formData.append('file', file)
-                      formData.append('folder', 'portfolio')
-                      const response = await fetch('/api/admin/upload', {
-                        method: 'POST',
-                        body: formData,
-                      })
-                      if (response.ok) {
-                        const data = await response.json()
-                        setFormData({ ...formData, thumbnail: data.url })
-                      }
+                        const uploadData = new FormData()
+                        uploadData.append('file', file)
+                        uploadData.append('folder', 'portfolio')
+
+                        const response = await fetch('/api/admin/upload', {
+                          method: 'POST',
+                          body: uploadData,
+                        })
+
+                        if (response.ok) {
+                          const data = await response.json()
+                          setFormData((prev) => ({
+                            ...prev,
+                            thumbnail: data.url || ""
+                          }))
+                        }
+
                     } catch (error) {
                       console.error('Upload error:', error)
                     } finally {
