@@ -26,9 +26,10 @@ export default function AdminLoginPage() {
       }
 
       console.log('[Login] Success, redirecting to dashboard');
-      // Small delay to ensure cookies are written
-      await new Promise(resolve => setTimeout(resolve, 200));
-      router.push("/admin/dashboard");
+      // Wait a moment for server to set cookies, then perform a full page navigation
+      // Full navigation ensures the browser sends the newly-set httpOnly cookies to the server.
+      await new Promise(resolve => setTimeout(resolve, 600));
+      window.location.href = '/admin/dashboard';
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setLoading(false);
