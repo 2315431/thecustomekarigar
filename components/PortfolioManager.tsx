@@ -185,7 +185,7 @@ export default function PortfolioManager({ initialItems }: PortfolioManagerProps
                 />
               </div>
               <div>
-                <label className="block text-[#6A0F16] font-semibold mb-2">Images *</label>
+                <label className="block text-[#6A0F16] font-semibold mb-2">Images * (Upload Files)</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -218,27 +218,16 @@ export default function PortfolioManager({ initialItems }: PortfolioManagerProps
                       setUploadingImages(false)
                     }
                   }}
-                  className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white mb-2"
+                  className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white"
                   disabled={uploadingImages}
+                  required={!editingItem}
                 />
                 {uploadingImages && <p className="text-sm text-gray-600 mt-2">Uploading images...</p>}
-                <div className="text-sm text-gray-600 mb-2 mt-4">OR</div>
-                <textarea
-                  value={formData.images}
-                  onChange={(e) => {
-                    setFormData({ ...formData, images: e.target.value })
-                    setUploadedImages(e.target.value.split(',').map(url => url.trim()).filter(Boolean))
-                  }}
-                  className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white"
-                  rows={4}
-                  placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                />
-                <p className="text-sm text-gray-600 mt-1">Enter image URLs separated by commas, or upload files above</p>
                 {uploadedImages.length > 0 && (
                   <div className="mt-4 grid grid-cols-3 gap-2">
                     {uploadedImages.map((url, index) => (
                       <div key={index} className="relative aspect-square rounded overflow-hidden border-2 border-[#6A0F16]">
-                        <Image src={url} alt={`Uploaded ${index + 1}`} fill className="object-cover" />
+                        <Image src={url} alt={`Image ${index + 1}`} fill className="object-cover" />
                         <button
                           type="button"
                           onClick={() => {

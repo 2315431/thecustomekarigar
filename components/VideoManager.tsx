@@ -186,16 +186,7 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                 />
               </div>
               <div>
-                <label className="block text-[#6A0F16] font-semibold mb-2">Video URL *</label>
-                <input
-                  type="url"
-                  required
-                  value={formData.video_url}
-                  onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                  className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white mb-2"
-                  placeholder="YouTube URL or Supabase Storage URL"
-                />
-                <div className="text-sm text-gray-600 mb-2">OR</div>
+                <label className="block text-[#6A0F16] font-semibold mb-2">Video Upload *</label>
                 <input
                   type="file"
                   accept="video/*"
@@ -221,8 +212,6 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                           storage_path: data.path || ""
                         }))
                       }
-                       
-                      
                     } catch (error) {
                       console.error('Upload error:', error)
                     } finally {
@@ -231,18 +220,13 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                   }}
                   className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white"
                   disabled={uploadingVideo}
+                  required={!editingVideo}
                 />
                 {uploadingVideo && <p className="text-sm text-gray-600 mt-2">Uploading video...</p>}
+                {formData.video_url && <p className="text-sm text-green-600 mt-2">✓ Video uploaded</p>}
               </div>
               <div>
-                <label className="block text-[#6A0F16] font-semibold mb-2">Thumbnail URL</label>
-                <input
-                  type="url"
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  className="w-full px-4 py-2 rounded border-2 border-[#6A0F16] bg-white mb-2"
-                />
-                <div className="text-sm text-gray-600 mb-2">OR</div>
+                <label className="block text-[#6A0F16] font-semibold mb-2">Thumbnail Upload</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -278,6 +262,7 @@ export default function VideoManager({ initialVideos }: VideoManagerProps) {
                   disabled={uploadingThumbnail}
                 />
                 {uploadingThumbnail && <p className="text-sm text-gray-600 mt-2">Uploading thumbnail...</p>}
+                {formData.thumbnail && <p className="text-sm text-green-600 mt-2">✓ Thumbnail uploaded</p>}
               </div>
               <div>
                 <label className="block text-[#6A0F16] font-semibold mb-2">Tags (comma-separated)</label>

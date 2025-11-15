@@ -22,12 +22,16 @@ async function getStats() {
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
+  
+  // Get user session to verify auth
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser()
 
-  if (error || !user) {
+  // Debug: log auth state
+  if (!user) {
+    console.error('Dashboard: No user found. Auth error:', error?.message)
     redirect('/admin/login')
   }
 
@@ -91,4 +95,3 @@ export default async function AdminDashboard() {
     </div>
   )
 }
-

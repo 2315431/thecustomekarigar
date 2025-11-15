@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
   try {
+    // Verify user is authenticated
     const supabase = await createClient()
     const {
       data: { session },
@@ -20,13 +22,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    // Use admin client for storage operations (bypasses RLS for storage)
+    const adminSupabase = createAdminClient()
+    
     // Generate unique filename
     const fileExt = file.name.split('.').pop()
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
     const filePath = `${folder}/${fileName}`
 
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    // Upload to Supabase Storage using admin client
+    const { data: uploadData, error: uploadError } = await adminSupabase.storage
       .from(folder === 'videos' ? 'videos' : 'portfolio')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -42,9 +47,13 @@ export async function POST(request: Request) {
     }
 
     // Get public URL
-    const { data: urlData } = supabase.storage
+    const { data: urlData } = adminSupabase.storage
       .from(folder === 'videos' ? 'videos' : 'portfolio')
       .getPublicUrl(filePath)
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Upload] File uploaded:', filePath, 'by user:', session.user.id)
+    }
 
     return NextResponse.json({
       path: filePath,
@@ -54,7 +63,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error in upload API:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

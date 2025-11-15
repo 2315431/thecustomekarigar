@@ -10,20 +10,29 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(formData: FormData) {
-
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
     setError("");
 
-    const res = await loginAction(formData);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const res = await loginAction(formData);
 
-    if (res.error) {
-      setError(res.error);
+      if (res.error) {
+        setError(res.error);
+        setLoading(false);
+        return;
+      }
+
+      console.log('[Login] Success, redirecting to dashboard');
+      // Small delay to ensure cookies are written
+      await new Promise(resolve => setTimeout(resolve, 200));
+      router.push("/admin/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
       setLoading(false);
-      return;
     }
-
-    router.push("/admin/dashboard");
   }
 
   return (
@@ -56,7 +65,7 @@ export default function AdminLoginPage() {
         )}
 
         <form
-          action={handleSubmit}
+          onSubmit={handleSubmit}
           className="bg-[#F5E6D3] border-2 border-[#6A0F16] rounded-lg p-8 shadow-lg"
           style={{
             backgroundImage: "url('/assets/bg-texture.jpg')",
